@@ -7,7 +7,7 @@ $Password = 'Password1' | ConvertTo-SecureString -AsPlainText -Force
 $UserCredential = New-Object System.Management.Automation.PSCredential( $Login , $Password )
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 Import-PSSession $Session
-$restUri = 'https://outlook.office365.com/api/v1.0/users'
+$restUri = 'https://outlook.office365.com/api/beta/users'
 
 
 $users = Get-Mailbox
