@@ -27,7 +27,6 @@ $select = 'SentDateTime,ReceivedDateTime,Sender,ToRecipients,BCCRecipients,Subje
 
 
 #Checking time - Powershell Switch
->>>>>>> 4922930347455599da00e27c992dea2ac0380ec1
 
 if ( $startDate = $null ) {
 
