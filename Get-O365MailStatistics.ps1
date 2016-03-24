@@ -7,7 +7,7 @@ $Password = 'C1sP4l6*1' | ConvertTo-SecureString -AsPlainText -Force
 $UserCredential = New-Object System.Management.Automation.PSCredential( $Login , $Password )
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 Import-PSSession $Session
-$restUri = 'https://outlook.office365.com/api/beta/users'
+$restUri = 'https://outlook.office365.com/api/v1.0/users'
 
 
 #$users = Get-Mailbox
@@ -15,7 +15,7 @@ $restUri = 'https://outlook.office365.com/api/beta/users'
 $startDate = Get-Date '01/01/2015' -Format yyyy-MM-dd
 $endDate = Get-Date '01/10/2016' -Format yyyy-MM-dd
 
-$search = '`$select=SendTime,ReceivedDateTime,Sender,ToRecipients,BCCRecipients,Subject'
+$select = '`$select=SendTime,ReceivedDateTime,Sender,ToRecipients,BCCRecipients,Subject'
 
 
 #Checking time
@@ -28,11 +28,11 @@ if ( $startDate = $null ) {
 
 elseif ( $endDate = $null ) {
 
-    $filter = "`$filter=ReceivedDateTime ge $startDate"
+    $filter = '`$filter=ReceivedDateTime ge $startDate'
 
 }
 
-$filter = "`$filter=ReceivedDateTime ge $startDate and ReceivedDateTime le $endDate"
+$filter = '`$filter=ReceivedDateTime ge $startDate and ReceivedDateTime le $endDate'
 
 
 if ( $startDate -eq $null -and $endDate -eq $null ) {
@@ -53,13 +53,19 @@ if ( $endDate > $startDate ) {
 }
 
 
-foreach ( $user in 'ben.hawkins@bie-executive.com' ) {
+foreach ( $user in 'viastak@bie-executive.com' ) {
     
     $results = @()
-        
-    $mailbatch = Invoke-RestMethod -Uri "$restUri/$user/messages?$filter" -Credential $UserCredential -Method Get ; $results = $mailbatch.value
+
+    $top = 25
+
+    $skip = 0
+
+    #$mailbatch = Invoke-RestMethod -Uri "$restUri/$user/messages?$filter&$select&`$top=$top&`$skip=$skip" -Credential $UserCredential -Method Get ; $results = $mailbatch.value
      
-    do { $mailbatch = Invoke-RestMethod -Uri $mailbatch.'@odata.nextLink' -Credential $UserCredential -Method Get ; $results += $mailbatch.value
+    do { $mailbatch = Invoke-RestMethod  -Uri "$restUri/$user/messages?$filter&$select&`$top=$top&`$skip=$skip" -Credential $UserCredential -Method Get
+         $results += $mailbatch.value
+         $skip += 25
       
       }
 
