@@ -81,7 +81,7 @@ foreach ( $user in Get-Mailbox | ForEach-Object UserPrincipalName ) {
 
       until ( $mailbatch.'@odata.nextLink' -eq $null )
 
-    }
 }
+
 
 $results | select SentDateTime, ReceivedDateTime, @{ n = 'Sender' ; e = { $_.Sender.EmailAddress.Address } }, @{ n = 'ToRecipients' ; e = { $_.ToRecipients.EmailAddress | %{ $_.Address } } }, Subject
