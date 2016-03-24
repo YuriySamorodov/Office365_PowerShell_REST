@@ -36,12 +36,6 @@ if ( $startDate = $null ) {
 
 elseif ( $endDate = $null ) {
 
-    $filter = "`$filter=ReceivedDateTime ge $startDate"
-
-}
-
-$filter = "`$filter=ReceivedDateTime ge $startDate and ReceivedDateTime le $endDate"
-
     $filter = '`$filter=ReceivedDateTime ge $startDate'
 
 }
