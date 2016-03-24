@@ -2,11 +2,9 @@
 
 #Varibles
 
-<<<<<<< HEAD
 $Login = 'viastak@bie-executive.com'
-=======
+
 $Login = 'viastak@bie-executive.com-'
->>>>>>> 4922930347455599da00e27c992dea2ac0380ec1
 $Password = 'C1sP4l6*1' | ConvertTo-SecureString -AsPlainText -Force
 $UserCredential = New-Object System.Management.Automation.PSCredential( $Login , $Password )
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
@@ -14,8 +12,7 @@ Import-PSSession $Session
 $restUri = 'https://outlook.office365.com/api/beta/users'
 
 
-<<<<<<< HEAD
-#$users = Get-Mailbox
+$users = Get-Mailbox
 
 $startDate = Get-Date '01/01/2015' -Format yyyy-MM-dd
 $endDate = Get-Date '01/10/2016' -Format yyyy-MM-dd
@@ -24,8 +21,6 @@ $search = '`$select=SendTime,ReceivedDateTime,Sender,ToRecipients,BCCRecipients,
 
 
 #Checking time
-=======
-$users = Get-Mailbox
 
 $startDate = Get-Date '01/01/2015' -Format yyyy-MM-dd
 $endDate = Get-Date '03/10/2016' -Format yyyy-MM-dd
@@ -44,19 +39,17 @@ if ( $startDate = $null ) {
 
 elseif ( $endDate = $null ) {
 
-<<<<<<< HEAD
     $filter = "`$filter=ReceivedDateTime ge $startDate"
 
 }
 
 $filter = "`$filter=ReceivedDateTime ge $startDate and ReceivedDateTime le $endDate"
-=======
+
     $filter = '`$filter=ReceivedDateTime ge $startDate'
 
 }
 
 $filter = "ReceivedDateTime ge $startDate and ReceivedDateTime le $endDate"
->>>>>>> 4922930347455599da00e27c992dea2ac0380ec1
 
 
 if ( $startDate -eq $null -and $endDate -eq $null ) {
@@ -77,7 +70,6 @@ if ( $endDate > $startDate ) {
 }
 
 
-<<<<<<< HEAD
 foreach ( $user in 'ben.hawkins@bie-executive.com' ) {
     
     $results = @()
@@ -85,7 +77,7 @@ foreach ( $user in 'ben.hawkins@bie-executive.com' ) {
     $mailbatch = Invoke-RestMethod -Uri "$restUri/$user/messages?$filter" -Credential $UserCredential -Method Get ; $results = $mailbatch.value
      
     do { $mailbatch = Invoke-RestMethod -Uri $mailbatch.'@odata.nextLink' -Credential $UserCredential -Method Get ; $results += $mailbatch.value
-=======
+
 $results = @()
  #test
 foreach ( $user in Get-Mailbox | ForEach-Object UserPrincipalName ) {
@@ -103,20 +95,17 @@ foreach ( $user in Get-Mailbox | ForEach-Object UserPrincipalName ) {
          $mailbatch = Invoke-RestMethod  -Uri "$restUri/$user/messages?`$top=$top&`$skip=$skip" -Credential $UserCredential -Method Get
          $results += $mailbatch.value
          $skip += 25
->>>>>>> 4922930347455599da00e27c992dea2ac0380ec1
-      
+
       }
 
       until ( $mailbatch.'@odata.nextLink' -eq $null )
 
-<<<<<<< HEAD
+$results| select SentDateTime, ReceivedDateTime, @{ n = 'Sender' ; e = { $_.Sender.EmailAddress.Address } }, @{ n = 'ToRecipients' ; e = { $_.ToRecipients.EmailAddress | %{ $_.Address } } }, Subject
+
+
 }
 
-$results| select SentDateTime, ReceivedDateTime, @{ n = 'Sender' ; e = { $_.Sender.EmailAddress.Address } }, @{ n = 'ToRecipients' ; e = { $_.ToRecipients.EmailAddress | %{ $_.Address } } }, Subject
-=======
 
 $results | select @{Name = 'Mailbox' ; Expression = { $user } }, SentDateTime, ReceivedDateTime, @{ n = 'Sender' ; e = { $_.Sender.EmailAddress.Address } }, @{ n = 'ToRecipients' ; e = { $_.ToRecipients.EmailAddress | %{ $_.Address } } }, Subject
 
 }
-
->>>>>>> 4922930347455599da00e27c992dea2ac0380ec1
