@@ -2,8 +2,6 @@
 
 #Varibles
 
-$Login = 'viastak@bie-executive.com'
-
 $Login = 'viastak@bie-executive.com-'
 $Password = 'C1sP4l6*1' | ConvertTo-SecureString -AsPlainText -Force
 $UserCredential = New-Object System.Management.Automation.PSCredential( $Login , $Password )
@@ -69,21 +67,11 @@ if ( $endDate > $startDate ) {
 
 }
 
-
-foreach ( $user in 'ben.hawkins@bie-executive.com' ) {
-    
-    $results = @()
-        
-    $mailbatch = Invoke-RestMethod -Uri "$restUri/$user/messages?$filter" -Credential $UserCredential -Method Get ; $results = $mailbatch.value
-     
-    do { $mailbatch = Invoke-RestMethod -Uri $mailbatch.'@odata.nextLink' -Credential $UserCredential -Method Get ; $results += $mailbatch.value
-
 $results = @()
- #test
+
 foreach ( $user in Get-Mailbox | ForEach-Object UserPrincipalName ) {
     
     #$results = @()
-
 
     $top = 25
     $skip = 0
@@ -100,12 +88,7 @@ foreach ( $user in Get-Mailbox | ForEach-Object UserPrincipalName ) {
 
       until ( $mailbatch.'@odata.nextLink' -eq $null )
 
-$results| select SentDateTime, ReceivedDateTime, @{ n = 'Sender' ; e = { $_.Sender.EmailAddress.Address } }, @{ n = 'ToRecipients' ; e = { $_.ToRecipients.EmailAddress | %{ $_.Address } } }, Subject
-
-
+    }
 }
 
-
-$results | select @{Name = 'Mailbox' ; Expression = { $user } }, SentDateTime, ReceivedDateTime, @{ n = 'Sender' ; e = { $_.Sender.EmailAddress.Address } }, @{ n = 'ToRecipients' ; e = { $_.ToRecipients.EmailAddress | %{ $_.Address } } }, Subject
-
-}
+$results | select SentDateTime, ReceivedDateTime, @{ n = 'Sender' ; e = { $_.Sender.EmailAddress.Address } }, @{ n = 'ToRecipients' ; e = { $_.ToRecipients.EmailAddress | %{ $_.Address } } }, Subject
