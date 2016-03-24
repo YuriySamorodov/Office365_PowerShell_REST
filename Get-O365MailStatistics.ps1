@@ -7,10 +7,10 @@ $Password = 'Password1' | ConvertTo-SecureString -AsPlainText -Force
 $UserCredential = New-Object System.Management.Automation.PSCredential( $Login , $Password )
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 Import-PSSession $Session
-$restUri = 'https://outlook.office365.com/api/beta/users'
+$restUri = 'https://outlook.office365.com/api/v1.0/users'
 
 
-#$users = Get-Mailbox
+$users = Get-Mailbox
 
 $startDate = Get-Date '01/01/2015' -Format yyyy-MM-dd
 $endDate = Get-Date '03/10/2016' -Format yyyy-MM-dd
@@ -54,17 +54,20 @@ if ( $endDate > $startDate ) {
 
 
 $results = @()
-
+ #test
 foreach ( $user in Get-Mailbox | ForEach-Object UserPrincipalName ) {
     
     #$results = @()
+
 
     $top = 25
     $skip = 0
 
     #$mailbatch = Invoke-RestMethod -Uri "$restUri/$user/messages?`$filter=$filter&`$select=$select&`$top=$top" -Credential $UserCredential -Method Get ; $results = $mailbatch.value
      
-    do { $mailbatch = Invoke-RestMethod  -Uri "$restUri/$user/messages?`$filter=$filter&`$top=$top&`$skip=$skip" -Credential $UserCredential -Method Get
+    do { Write-Host $user
+         
+         $mailbatch = Invoke-RestMethod  -Uri "$restUri/$user/messages?`$top=$top&`$skip=$skip" -Credential $UserCredential -Method Get
          $results += $mailbatch.value
          $skip += 25
       
