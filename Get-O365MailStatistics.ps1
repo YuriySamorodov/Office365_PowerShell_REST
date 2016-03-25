@@ -1,20 +1,37 @@
 ﻿#Mail
 
+
+Param (
+
+    
+    [Parameter(Mandatory = $true,Position = 1 )]
+    [string]$FilePath,
+    
+    [Parameter(Mandatory = $true)]
+    [datetime]$StartDate,
+    
+    [Parameter(Mandatory = $true)]
+    [datetime]$EndDate
+
+
+)
+
+
 #Varibles
 $restUri = 'https://outlook.office365.com/api/beta/users'
-$Login = 'viastak@bie-executive.com'
-$Password = 'C1sP4l6*1' | ConvertTo-SecureString -AsPlainText -Force
+$Login = 'Yuriy.Samorodov@imsupportteam.onmicrosoft.com'
+$Password = 'Password1' | ConvertTo-SecureString -AsPlainText -Force
 $UserCredential = New-Object System.Management.Automation.PSCredential( $Login , $Password )
 
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 Import-PSSession $Session
-$users = Get-Mailbox -Filter { RecipientTypeDetails -ne 'DiscoverySearch'  } -SortBy UserPrincipalName 
+$users = Get-Mailbox -Filter { RecipientTypeDetails -ne 'DiscoveryMailbox'  } -SortBy DisplayName
 
-$startDate = Get-Date '01/01/2015' -Format yyyy-MM-dd
-$endDate = Get-Date '01/10/2017' -Format yyyy-MM-dd
+$Start= Get-Date $StartDate -Format yyyy-MM-dd
+$End = Get-Date $EndDate -Format yyyy-MM-dd
 
 $select = 'SentDateTime,ReceivedDateTime,Sender,ToRecipients,BCCRecipients,Subject'
-$filter = "ReceivedDateTime ge $startDate and ReceivedDateTime le $endDate"
+$filter = "ReceivedDateTime ge $Start and ReceivedDateTime le $End"
 
 
 #Checking time
@@ -71,10 +88,11 @@ foreach ( $user in $users | ForEach-Object UserPrincipalName ) {
      
     do { Write-Host $user
          
-         $batch = Invoke-RestMethod  -Uri "$restUri/$user/messages?``$filter=$filter&`$select=$select&`$top=$top&`$skip=$skip" -Credential $UserCredential -Method Get
+         $batch = Invoke-RestMethod -Method Get -Uri "$restUri/$user/messages?`$filter=$filter&`$select=$select&`$top=$top&`$skip=$skip" -Credential $UserCredential
          $results += $batch.value
          $skip += 25
 
+         Write-Host $batch.'@odata.nextLink'
       }
 
       until ( $batch.'@odata.nextLink' -eq $null )
@@ -82,4 +100,4 @@ foreach ( $user in $users | ForEach-Object UserPrincipalName ) {
 }
 
 
-$results | select SentDateTime, ReceivedDateTime, @{ n = 'Sender' ; e = { $_.Sender.EmailAddress.Address } }, @{ n = 'ToRecipients' ; e = { $_.ToRecipients.EmailAddress | %{ $_.Address } } }, Subject
+$results | select SentDateTime, ReceivedDateTime, @{ n = 'Sender' ; e = { $_.Sender.EmailAddress.Address } }, @{ n = 'ToRecipients' ; e = { $_.ToRecipients.EmailAddress | %{ $_.Address } } }, Subject | Export-csv -NoTypeInformation $FilePath
