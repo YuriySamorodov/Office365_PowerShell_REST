@@ -24,7 +24,7 @@ $endDate = Get-Date '03/10/2016' -Format yyyy-MM-dd
 
 
 #Checking time - Powershell Switch
-
+<#
 if ( $startDate = $null ) {
 
     $filter = "`$filter=ReceivedDateTime le $endDate"
@@ -55,6 +55,10 @@ if ( $endDate > $startDate ) {
     Write-Error -Message 'Start date should be newer than end date' -WarningAction Stop -Category InvalidData
 
 }
+
+
+#>
+
 
 $results = @()
 
