@@ -84,14 +84,12 @@ foreach ( $user in $users | ForEach-Object UserPrincipalName ) {
 
     #$mailbatch = Invoke-RestMethod -Uri "$restUri/$user/messages?`$filter=$filter&`$select=$select&`$top=$top" -Credential $UserCredential -Method Get ; $results = $mailbatch.value
      
-    do { Write-Host $user
-         
+    do {          
          $batch = Invoke-RestMethod -Method Get -Uri "$restUri/$user/messages?`$filter=$filter&`$select=$select&`$top=$top&`$skip=$skip" -Credential $UserCredential
          $results += $batch.value
          $skip += 25
-
-         Write-Host $batch.'@odata.nextLink'
-      }
+       
+       }
 
       until ( $batch.'@odata.nextLink' -eq $null )
 
