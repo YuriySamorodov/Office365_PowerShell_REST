@@ -87,4 +87,4 @@ foreach ( $user in $users | ForEach-Object UserPrincipalName ) {
        }  until ( $batch.'@odata.nextLink' -eq $null )
 }
 
-$results | select  user, CalendarName, @{ n = 'Organizer' ; e = { $_.Organizer.EmailAddress.Address } }, @{ n = 'Attendees' ; e = { $_.Attendees.EmailAddress | %{ $_.Address } } }, @{ n = 'Start' ; e = { $_.Start.DateTime } }, @{ n = 'End' ; e = { $_.End.DateTime } } @{ n = 'ResponseSatus' ; e = { $_.ResponseStatus.Response } }, @{ n = 'ResponseTime' ; e = { $_.ResponseStatus.Time } } | Export-Csv -NoTypeInformation test.csv
+$results | select  user, CalendarName, @{ n = 'Organizer' ; e = { $_.Organizer.EmailAddress.Address } }, @{ n = 'Attendees' ; e = { $_.Attendees.EmailAddress | %{ $_.Address } } }, @{ n = 'Start' ; e = { $_.Start.DateTime } }, @{ n = 'End' ; e = { $_.End.DateTime } } @{ n = 'ResponseSatus' ; e = { $_.ResponseStatus.Response } }, @{ n = 'ResponseTime' ; e = { $_.ResponseStatus.Time } } | Export-Csv -NoTypeInformation $filePath
