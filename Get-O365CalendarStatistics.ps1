@@ -1,5 +1,6 @@
 #Calendar
 
+Get-PSSession | Remove-PSSession
 
 Param (
 
