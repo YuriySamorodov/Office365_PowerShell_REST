@@ -1,6 +1,5 @@
 #Calendar
 
-Get-PSSession | Remove-PSSession
 
 Param (
 
@@ -17,7 +16,8 @@ Param (
 
 )
 
-
+Get-PSSession | Remove-PSSession
+ 
 #Varibles
 $restUri = 'https://outlook.office365.com/api/beta/users'
 $UserCredential = Get-Credential
