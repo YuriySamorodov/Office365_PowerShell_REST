@@ -23,7 +23,7 @@ $restUri = 'https://outlook.office365.com/api/beta/users'
 $UserCredential = Get-Credential
 
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
-Import-PSSession $Session
+Import-PSSession $Session -AllowClobber
 $users = Get-Mailbox -Filter { RecipientTypeDetails -ne 'DiscoveryMailbox'  } -SortBy DisplayName
 
 $Start = Get-Date $StartDate -Format yyyy-MM-dd
