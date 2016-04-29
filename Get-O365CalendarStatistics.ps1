@@ -82,10 +82,11 @@ foreach ( $user in $users | ForEach-Object UserPrincipalName ) {
     $skip = 0
      
     do {          
-         $batch = Invoke-RestMethod -Method Get -Uri "$restUri/$user/events?`$top=$top&`$skip=$skip&`$select=$select&`$filter=$filter" -Credential $UserCredential
-         $results += $batch.value | select *, @{ Name = 'User' ; Expression ={ $user  }  }, @{ Name = 'CalendarName' ; Expression = { ( Invoke-RestMethod -Method GET -Uri $_.'Calendar@odata.navigationLink' -Credential $UserCredential ).Name }  }
+         $batch = Invoke-RestMethod -Method Get -Uri "$restUri/$user/calendarview?StartDateTime=$($Start)T01:00:00&EndDateTime=$($End)T23:00:00&`$skip=$skip" -Credential $UserCredential
+         $results += $batch.value | select *, @{ Name = 'User' ; Expression ={ $user  }  } #, @{ Name = 'CalendarName' ; Expression = { ( Invoke-RestMethod -Method GET -Uri $_.'Calendar@odata.navigationLink' -Credential $UserCredential ).Name }  }
          $skip += 25
        }  until ( $batch.'@odata.nextLink' -eq $null )
 }
 
-$results | select  user, CalendarName, @{ n = 'Organizer' ; e = { $_.Organizer.EmailAddress.Address } }, @{ n = 'Attendees' ; e = { $_.Attendees.EmailAddress | %{ $_.Address } } }, @{ n = 'Start' ; e = { $_.Start.DateTime } }, @{ n = 'End' ; e = { $_.End.DateTime } } , @{ n = 'ResponseSatus' ; e = { $_.ResponseStatus.Response } }, @{ n = 'ResponseTime' ; e = { $_.ResponseStatus.Time } } | Export-Csv -NoTypeInformation $filePath
+$results[0] | select user, @{ n = 'Organizer' ; e = { $_.Organizer.EmailAddress.Address } }, @{ n = 'Attendee:Type:ResponseTime:ResponseStatus' ; e = { ( $_.Attendees.EmailAddress | %{ $_.Address } ) + ':' + ( $_.Attendees.Type ) + ':' + ( $_.Attendees.Status.Time ) + ':' + ( $_.Attendees.Status.Response ) } }, @{ n = 'Start' ; e = { $_.Start.DateTime } }, @{ n = 'End' ; e = { $_.End.DateTime } } , @{ n = 'ResponseSatus' ; e = { $_.ResponseStatus.Response } }, @{ n = 'ResponseTime' ; e = { $_.ResponseStatus.Time } } #| Export-Csv -NoTypeInformation $filePath
+ 
