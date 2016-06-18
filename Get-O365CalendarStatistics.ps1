@@ -88,5 +88,10 @@ foreach ( $user in $users | ForEach-Object UserPrincipalName ) {
        }  until ( $batch.'@odata.nextLink' -eq $null )
 }
 
+<<<<<<< HEAD
 $results | select id, user, Subject, @{ n = 'Organizer' ; e = { $_.Organizer.EmailAddress.Address } }, @{ n = 'Attendee:Type:ResponseTime:ResponseStatus' ; e = { $_.Attendees | %{ $_.EmailAddress.Address + ':' + $_.Type + ':' + $_.Status.Time + ':' + $_.Status.Response  } } }, @{ n = 'Start' ; e = { $_.Start.DateTime } }, @{ n = 'End' ; e = { $_.End.DateTime } } , @{ n = 'ResponseSatus' ; e = { $_.ResponseStatus.Response } }, @{ n = 'ResponseTime' ; e = { $_.ResponseStatus.Time } } | Export-Csv -NoTypeInformation $filePath
  
+=======
+$results | select id, @{ Name = 'Meeting Title' ; Expression = { $_.Subject } }, user, @{ n = 'Organizer' ; e = { $_.Organizer.EmailAddress.Address } }, @{ n = 'Attendee:Type:ResponseTime:ResponseStatus' ; e = { $_.Attendees | %{ $_.EmailAddress.Address + ':' + $_.Type + ':' + $_.Status.Time + ':' + $_.Status.Response  } } }, @{ n = 'Start' ; e = { $_.Start.DateTime } }, @{ n = 'End' ; e = { $_.End.DateTime } } , @{ n = 'ResponseSatus' ; e = { $_.ResponseStatus.Response } }, @{ n = 'ResponseTime' ; e = { $_.ResponseStatus.Time } } | Export-Csv -NoTypeInformation $filePath
+ 
+>>>>>>> origin/master
